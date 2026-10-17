@@ -18,6 +18,16 @@ Open http://127.0.0.1:8000 .
 
 `PYTHONPATH` is cleared because some shells export a path that breaks this virtualenv. The first outline click downloads the MedSAM2 checkpoint into `checkpoints/` if it is not already there, then loads the model. Later clicks do not pay that load again. If the checkpoint or the model cannot be loaded, the same click uses a region grow and the page says MedSAM2 did not run.
 
+## Demo mode and research mode
+
+There is no mode switch. The left-hand list has two groups, and the visit you open decides which view you get.
+
+**Demo mode** is any visit under **Practice set**. Those visits exist after the practice CTs and the manual contours are downloaded, as described below. Open one and the page shows two viewers: the tool outline on the left and the expert outline on the right, with an overlap score on each nodule. **Show expert outline** hides the right viewer and the score, so you can rehearse the research workflow on a scan whose answer you can reveal again. Practice timepoints stay `test` and `retest`.
+
+**Research mode** is any visit under **Research scans**. The page starts with none. Put a DICOM series in `data/inbox/<series>/*.dcm` and click **Rescan inbox**. The server does not need a restart. Open that visit and there is one viewer. There is no expert outline and no overlap score, because a new scan does not have one. Studies for one patient are ordered by study date. The earliest timepoint starts as `baseline`, and later studies start as `follow-up`, `follow-up 2`, and so on. That label can be edited. Match to prior stays empty on the earliest study.
+
+Nodule finding stays a manual scroll in both modes. The tool does not search the scan for every nodule.
+
 ## Practice set
 
 The practice scans are the public RIDER Lung CT collection and the manual gross-tumour outlines in RIDER-LungCT-Seg. Both are free to use with attribution. They are not in this repository.
@@ -33,15 +43,11 @@ env -u PYTHONPATH .venv/bin/python scripts/download_tcia_manifest.py \
   --dest data/seg
 ```
 
-The reference contour is the manual ROI (`GTVp_test_man` or `GTVp_retest_man`). The automatic contours are not used. The first launch reads the CT headers and those contours into `data/cache/`. Later launches reuse that cache.
-
-Practice visits open with both viewers. "Show expert outline" hides the expert pane and the overlap line so the research workflow can be rehearsed, then shows them again. Timepoints stay `test` and `retest`.
+The reference contour is the manual ROI (`GTVp_test_man` or `GTVp_retest_man`). The automatic contours are not used. The first launch reads the CT headers and those contours into `data/cache/`. Later launches reuse that cache. After that, the visits show up under **Practice set**, which is demo mode.
 
 ## Research scans
 
-Put a DICOM series in `data/inbox/<series>/*.dcm` and click Rescan inbox. The server does not need a restart. Those visits have no expert outline. Studies for one patient are ordered by study date. The earliest timepoint starts as `baseline`, and later studies start as `follow-up`, `follow-up 2`, and so on. The timepoint label can be edited. Match to prior stays empty on the earliest study.
-
-Nodule finding stays a manual scroll. The tool does not search the scan for every nodule.
+A research visit is a folder of DICOM slices, `data/inbox/<series>/*.dcm`. Click **Rescan inbox** and open it from **Research scans**. One series folder is one visit. The behavior of that visit is described under Demo mode and research mode above.
 
 ## Review
 
