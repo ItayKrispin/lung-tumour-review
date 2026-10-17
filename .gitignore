@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+data/ct/
+data/seg/
+data/inbox/
+data/cache/
+data/_zips/
+checkpoints/
+*.zip
+
+# Kept on this machine. Not part of the handoff.
+PROJECT_CONTEXT.md
+Base44 - Home Assignment FDE.pdf
+MSKCC-RepeatCT-Lesion-notes-for-RIDER.xls
+RIDERLungCT_Correlation-Between-DICOM-Image-Series-and-DICOM-SEG-Segmentation.pdf
+demo/reviewed-visits (3).csv

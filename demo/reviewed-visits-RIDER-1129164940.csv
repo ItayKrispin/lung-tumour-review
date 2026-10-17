@@ -1,0 +1,3 @@
+Patient ID,Scan date,Timepoint,Series #,Slice thickness (mm),Nodule ID,Lobe,Slice #,Type,Long axis (mm),Short axis (mm),Mean diameter (mm),Solid component (mm),Volume (mm3),Match to prior,Minutes on scan,Measured by,Notes
+RIDER-1129164940,2006-09-20,test,4,1.25,1,RUL,70,solid,96.6,71.7,84.15,,135253,,40,,
+RIDER-1129164940,2006-09-20,retest,8,1.25,1,RUL,73,solid,100.6,87.8,94.20,,130610,Confident,40,,

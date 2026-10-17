@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lung tumour review</title>
+  <link rel="stylesheet" href="/static/app.css?v=4">
+</head>
+<body>
+  <header>
+    <div>
+      <p class="eyebrow">Harbor Thoracic Oncology Research Lab · practice set</p>
+      <h1>Lung tumour review</h1>
+    </div>
+    <p class="banner">Research use only. Not for clinical decisions.</p>
+    <p id="timer" class="timer">00:00</p>
+  </header>
+  <div class="layout">
+    <aside class="cases">
+      <h2>Visits</h2>
+      <p class="meta">Checked visits are included in the export. Practice visits can show the expert outline. Research scans do not have one.</p>
+      <div id="case-list"></div>
+    </aside>
+    <main>
+      <div class="viewports" id="viewports">
+        <section>
+          <h2>Tool outline</h2>
+          <div class="stage">
+            <img id="tool-image" alt="">
+            <canvas id="tool-canvas"></canvas>
+          </div>
+        </section>
+        <section id="expert-pane">
+          <h2>Expert outline</h2>
+          <div class="stage">
+            <img id="expert-image" alt="">
+            <canvas id="expert-canvas"></canvas>
+          </div>
+        </section>
+      </div>
+      <div class="scrub">
+        <input id="slice" type="range" min="0" max="0" value="0" disabled>
+        <span id="slice-label">Open a visit</span>
+      </div>
+      <div class="toolbar">
+        <button type="button" id="mode-propose" class="active">Propose</button>
+        <button type="button" id="mode-paint">Paint</button>
+        <button type="button" id="mode-erase">Erase</button>
+        <label>Brush <input id="radius" type="range" min="2" max="28" value="10"></label>
+        <label id="show-expert-wrap" hidden><input id="show-expert" type="checkbox" checked> Show expert outline</label>
+        <p id="hint">Click the nodule on the tool image. The outline starts unverified until you accept it.</p>
+        <p id="expert-note" class="meta" hidden>No expert outline on this scan.</p>
+      </div>
+      <p id="message" class="message"></p>
+    </main>
+    <aside class="detail">
+      <h2>This visit</h2>
+      <p id="visit-meta" class="meta">No visit open.</p>
+      <label id="timepoint-wrap" hidden>Timepoint <input id="timepoint" type="text"></label>
+      <button type="button" id="start-over" disabled>Start over</button>
+      <div id="reset-confirm" hidden>
+        <p class="meta">Clear this visit's nodules, calipers, and timer?</p>
+        <div class="actions">
+          <button type="button" id="reset-yes">Start over</button>
+          <button type="button" id="reset-no">Cancel</button>
+        </div>
+      </div>
+      <div id="nodules"></div>
+      <button type="button" id="export">Export reviewed visits</button>
+      <p class="meta">Downloads the checked visits only. A visit is checked once it has an accepted or edited nodule, and you can uncheck it. Minutes are written on the first row of each visit.</p>
+    </aside>
+  </div>
+  <script src="/static/app.js?v=4"></script>
+</body>
+</html>
