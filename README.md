@@ -6,6 +6,8 @@ A local page for outlining lung tumours on CT, reviewing the outline, and export
 
 The page runs on the machine that holds the scans. Nothing is uploaded.
 
+![Lung tumour review: tool outline beside the expert outline](demo/UI.png)
+
 ## Run
 
 ```bash
