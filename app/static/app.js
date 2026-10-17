@@ -30,6 +30,7 @@ const state = {
   exportable: new Map(),
   declined: new Set(),
   showExpert: true,
+  collapsedSets: new Set(),
 };
 
 sliceInput.addEventListener("input", () => {
@@ -79,35 +80,44 @@ function renderCaseList() {
   caseList.replaceChildren();
   const practice = state.cases.filter((item) => item.source !== "research");
   const research = state.cases.filter((item) => item.source === "research");
-  appendSection("Practice set", practice);
-  const researchTitle = document.createElement("h3");
-  researchTitle.className = "section-label";
-  researchTitle.textContent = "Research scans";
-  caseList.append(researchTitle);
-  const note = document.createElement("p");
-  note.className = "meta";
-  note.textContent = research.length
-    ? "These scans have no expert outline."
-    : "Drop a DICOM series into data/inbox, then rescan.";
-  caseList.append(note);
-  const rescan = document.createElement("button");
-  rescan.type = "button";
-  rescan.textContent = "Rescan inbox";
-  rescan.onclick = () => rescanInbox();
-  caseList.append(rescan);
-  appendPatientGroups(research);
+  appendSet("practice", "Practice set", practice);
+  appendSet("research", "Research scans", research);
   highlightCurrentVisit();
 }
 
-function appendSection(label, visits) {
-  const title = document.createElement("h3");
-  title.className = "section-label";
-  title.textContent = label;
-  caseList.append(title);
-  appendPatientGroups(visits);
+function appendSet(id, label, visits) {
+  const collapsed = state.collapsedSets.has(id);
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "set-toggle";
+  toggle.setAttribute("aria-expanded", String(!collapsed));
+  toggle.textContent = `${collapsed ? "▸" : "▾"} ${label} (${visits.length})`;
+  toggle.onclick = () => {
+    if (state.collapsedSets.has(id)) state.collapsedSets.delete(id);
+    else state.collapsedSets.add(id);
+    renderCaseList();
+  };
+  caseList.append(toggle);
+  if (id === "research") {
+    const note = document.createElement("p");
+    note.className = "meta";
+    note.textContent = visits.length
+      ? "These scans have no expert outline."
+      : "Drop a DICOM series into data/inbox, then rescan.";
+    const rescan = document.createElement("button");
+    rescan.type = "button";
+    rescan.textContent = "Rescan inbox";
+    rescan.onclick = () => rescanInbox();
+    caseList.append(note, rescan);
+  }
+  const body = document.createElement("div");
+  body.className = "set-body";
+  body.hidden = collapsed;
+  appendPatientGroups(body, visits);
+  caseList.append(body);
 }
 
-function appendPatientGroups(visits) {
+function appendPatientGroups(parent, visits) {
   const groups = new Map();
   for (const item of visits) {
     if (!groups.has(item.patient_id)) groups.set(item.patient_id, []);
@@ -117,12 +127,12 @@ function appendPatientGroups(visits) {
     const patientTitle = document.createElement("p");
     patientTitle.className = "patient";
     patientTitle.textContent = patient;
-    caseList.append(patientTitle);
-    appendVisits(patientVisits);
+    parent.append(patientTitle);
+    appendVisits(parent, patientVisits);
   }
 }
 
-function appendVisits(visits) {
+function appendVisits(parent, visits) {
   for (const visit of visits) {
     if (visit.exportable) state.exportable.set(visit.id, true);
     if (visit.exportable && !state.declined.has(visit.id)) state.exportChecked.add(visit.id);
@@ -147,7 +157,7 @@ function appendVisits(visits) {
     button.textContent = visitLabel(visit);
     button.onclick = () => openCase(visit.id, button);
     row.append(box, button);
-    caseList.append(row);
+    parent.append(row);
   }
 }
 
