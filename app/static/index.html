@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lung tumour review</title>
-  <link rel="stylesheet" href="/static/app.css?v=4">
+  <link rel="stylesheet" href="/static/app.css?v=7">
 </head>
 <body>
   <header>
@@ -17,9 +17,14 @@
   </header>
   <div class="layout">
     <aside class="cases">
-      <h2>Visits</h2>
-      <p class="meta">Checked visits are included in the export. Practice visits can show the expert outline. Research scans do not have one.</p>
-      <div id="case-list"></div>
+      <div class="panel-bar">
+        <h2>Visits</h2>
+        <button type="button" id="toggle-visits" aria-expanded="true" aria-controls="visits-body">Hide</button>
+      </div>
+      <div id="visits-body" class="panel-scroll">
+        <p class="meta">Checked visits are included in the export. Practice visits can show the expert outline. Research scans do not have one.</p>
+        <div id="case-list"></div>
+      </div>
     </aside>
     <main>
       <div class="viewports" id="viewports">
@@ -54,7 +59,11 @@
       <p id="message" class="message"></p>
     </main>
     <aside class="detail">
-      <h2>This visit</h2>
+      <div class="panel-bar">
+        <h2>This visit</h2>
+        <button type="button" id="toggle-detail" aria-expanded="true" aria-controls="detail-body">Hide</button>
+      </div>
+      <div id="detail-body" class="panel-scroll">
       <p id="visit-meta" class="meta">No visit open.</p>
       <label id="timepoint-wrap" hidden>Timepoint <input id="timepoint" type="text"></label>
       <button type="button" id="start-over" disabled>Start over</button>
@@ -68,8 +77,9 @@
       <div id="nodules"></div>
       <button type="button" id="export">Export reviewed visits</button>
       <p class="meta">Downloads the checked visits only. A visit is checked once it has an accepted or edited nodule, and you can uncheck it. Minutes are written on the first row of each visit.</p>
+      </div>
     </aside>
   </div>
-  <script src="/static/app.js?v=4"></script>
+  <script src="/static/app.js?v=7"></script>
 </body>
 </html>

@@ -55,6 +55,8 @@ document.querySelector("#show-expert").onchange = () => {
   renderNodules();
 };
 document.querySelector("#timepoint").onchange = () => saveTimepoint();
+document.querySelector("#toggle-visits").onclick = () => togglePanel("visits-collapsed", "#toggle-visits", "visits");
+document.querySelector("#toggle-detail").onclick = () => togglePanel("detail-collapsed", "#toggle-detail", "this visit");
 
 toolCanvas.addEventListener("pointerdown", onPointerDown);
 toolCanvas.addEventListener("pointermove", onPointerMove);
@@ -257,24 +259,35 @@ function largestExpertSlice() {
 function showSlice() {
   if (!state.caseId) return;
   applyExpertVisibility();
-  const url = `/api/cases/${state.caseId}/slice/${state.slice}.png?t=${Date.now()}`;
+  const url = `/api/cases/${state.caseId}/slice/${state.slice}.png`;
   const showExpert = expertVisible();
-  setMessage("Loading slices…");
+  const token = (state.sliceToken = (state.sliceToken || 0) + 1);
   let pending = showExpert ? 2 : 1;
   const ready = () => {
     pending -= 1;
-    if (pending > 0) return;
+    if (pending > 0 || token !== state.sliceToken) return;
     resizeCanvas(toolCanvas, toolImage);
     if (showExpert) resizeCanvas(expertCanvas, expertImage);
     drawTool();
     if (showExpert) drawExpert();
-    setMessage("");
+    if (messageEl.textContent === "Opening visit…") setMessage("");
   };
-  toolImage.onload = ready;
-  if (showExpert) expertImage.onload = ready;
-  toolImage.src = url;
-  if (showExpert) expertImage.src = url;
+  watchImage(toolImage, url, token, ready);
+  if (showExpert) watchImage(expertImage, url, token, ready);
   sliceLabel.textContent = `Slice ${state.slice + 1} of ${state.meta.n_slices}`;
+}
+
+function watchImage(image, url, token, onReady) {
+  let done = false;
+  const finish = () => {
+    if (done || token !== state.sliceToken) return;
+    if (image.getAttribute("src") !== url || !image.naturalWidth) return;
+    done = true;
+    onReady();
+  };
+  image.onload = finish;
+  if (image.getAttribute("src") !== url) image.src = url;
+  if (image.complete && image.naturalWidth) finish();
 }
 
 function resizeCanvas(canvas, image) {
@@ -698,6 +711,16 @@ async function exportChecked() {
   } catch (error) {
     setMessage(error.message, true);
   }
+}
+
+function togglePanel(className, buttonSelector, label) {
+  const layout = document.querySelector(".layout");
+  layout.classList.toggle(className);
+  const collapsed = layout.classList.contains(className);
+  const button = document.querySelector(buttonSelector);
+  button.textContent = collapsed ? "Show" : "Hide";
+  button.setAttribute("aria-expanded", String(!collapsed));
+  button.setAttribute("aria-label", `${collapsed ? "Show" : "Hide"} ${label}`);
 }
 
 function setMode(mode) {
